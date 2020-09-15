@@ -14,6 +14,6 @@ app.get('/', (req, res) => res.json({ msg: 'Welcome to Ursus API....' }));
 //Routes
 app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/userLists', require('./routes/userLists'));
+app.use('/api/contacts', require('./routes/contacts'));
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

@@ -3,23 +3,23 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 const User = require('../models/User');
-const UserList = require('../models/UserList');
+const Contact = require('../models/Contact');
 
-// @route   GET api/userLists
+// @route   GET api/contacts
 // @desc    Get user's user lists
 // @access  Private
 router.get('/', auth, async (req, res) => {
   try {
-    const userLists = await UserList.find({ user: req.user.id }).sort({
+    const contacts = await Contact.find({ user: req.user.id }).sort({
       date: -1,
     });
-    res.json(userLists);
+    res.json(contacts);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
-// @route   POST api/userLists
+// @route   POST api/contacts
 // @desc    Add new user to user's list
 // @access  Private
 router.post(
@@ -34,7 +34,7 @@ router.post(
     const { name, lastName, gender, IDNumber, email, phone, type } = req.body;
 
     try {
-      const newUserList = new UserList({
+      const newContact = new Contact({
         name,
         lastName,
         gender,
@@ -45,48 +45,48 @@ router.post(
         user: req.user.id,
       });
 
-      const userList = await newUserList.save();
+      const contact = await newContact.save();
 
-      res.json(userList);
+      res.json(contact);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
     }
   }
 );
-// @route   PUT api/userLists/:id
+// @route   PUT api/contacts/:id
 // @desc    Update user's user list
 // @access  Private
 router.put('/:id', auth, async (req, res) => {
   const { name, lastName, IDNumber, email, phone, gender, type } = req.body;
 
-  const userListFields = {};
-  if (name) userListFields.name = name;
-  if (lastName) userListFields.lastName = lastName;
-  if (IDNumber) userListFields.IDNumber = IDNumber;
-  if (email) userListFields.email = email;
-  if (phone) userListFields.phone = phone;
-  if (gender) userListFields.gender = gender;
-  if (type) userListFields.type = type;
+  const contactFields = {};
+  if (name) contactFields.name = name;
+  if (lastName) contactFields.lastName = lastName;
+  if (IDNumber) contactFields.IDNumber = IDNumber;
+  if (email) contactFields.email = email;
+  if (phone) contactFields.phone = phone;
+  if (gender) contactFields.gender = gender;
+  if (type) contactFields.type = type;
 
   try {
-    let userList = await UserList.findById(req.params.id);
+    let contact = await Contact.findById(req.params.id);
 
-    if (!userList) {
-      return res.status(400).json({ msg: 'User List not found' });
+    if (!contact) {
+      return res.status(400).json({ msg: 'Contact not found' });
     }
 
     //User owns the List
-    if (userList.user.toString() !== req.user.id) {
+    if (contact.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'Not Autorized' });
     }
 
-    userList = await UserList.findByIdAndUpdate(
+    contact = await Contact.findByIdAndUpdate(
       req.params.id,
-      { $set: userListFields },
+      { $set: contactFields },
       { new: true }
     );
-    res.json(userList);
+    res.json(contact);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -97,17 +97,17 @@ router.put('/:id', auth, async (req, res) => {
 // @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    let userList = await UserList.findById(req.params.id);
-    if (!userList) {
-      return res.status(400).json({ msg: 'User List not found' });
+    let contact = await Contact.findById(req.params.id);
+    if (!contact) {
+      return res.status(400).json({ msg: 'Contact not found' });
     }
     //User owns the List to delete
-    if (userList.user.toString() !== req.user.id) {
+    if (contact.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'Not Autorized' });
     }
 
-    await UserList.findByIdAndDelete(req.params.id);
-    res.json({ msg: 'User List Removed!' });
+    await Contact.findByIdAndDelete(req.params.id);
+    res.json({ msg: 'Contact Removed!' });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
