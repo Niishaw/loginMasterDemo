@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://hein123:hein123@ursuscluster.qjjmy.gcp.mongodb.net/UrsusCluster?retryWrites=true&w=majority",
+  "jwtSecret": "secret"
+}
