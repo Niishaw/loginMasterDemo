@@ -1,0 +1,147 @@
+import React, { useState, useContext, useEffect } from 'react';
+import ContactContext from '../../context/contact/contactContext';
+
+const ContactForm = () => {
+  const contactContext = useContext(ContactContext);
+
+  const { addContact, current, clearCurrent, updateContact } = contactContext;
+
+  useEffect(() => {
+    if (current !== null) {
+      setContact(current);
+    } else {
+      setContact({
+        name: '',
+        lastName: '',
+        IDNumber: '',
+        email: '',
+        gender: 'male',
+        phone: '',
+        type: 'personal',
+      });
+    }
+  }, [contactContext, current]);
+
+  const [contact, setContact] = useState({
+    name: '',
+    lastName: '',
+    IDNumber: '',
+    email: '',
+    gender: 'male',
+    phone: '',
+    type: 'personal',
+  });
+
+  const { name, lastName, IDNumber, email, gender, phone, type } = contact;
+
+  const onChange = (e) =>
+    setContact({ ...contact, [e.target.name]: e.target.value });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if (current === null) {
+      addContact(contact);
+    } else {
+      updateContact(contact);
+    }
+    clearAll();
+  };
+
+  const clearAll = () => {
+    clearCurrent();
+  };
+
+  return (
+    <form onSubmit={onSubmit}>
+      <h2 className='text-primary'>
+        {current ? 'Edit Contact' : 'Add Contact'}
+      </h2>
+      <input
+        type='text'
+        placeholder='Name'
+        name='name'
+        value={name}
+        onChange={onChange}
+      />
+      <input
+        type='text'
+        placeholder='Last Name'
+        name='lastName'
+        value={lastName}
+        onChange={onChange}
+      />
+      <input
+        type='text'
+        placeholder='ID Number'
+        name='IDNumber'
+        value={IDNumber}
+        onChange={onChange}
+      />
+      <input
+        type='email'
+        placeholder='Email'
+        name='email'
+        value={email}
+        onChange={onChange}
+      />
+      <input
+        type='text'
+        placeholder='Phone'
+        name='phone'
+        value={phone}
+        onChange={onChange}
+      />
+      <h4>Contact Gender</h4>
+      <input
+        type='radio'
+        name='gender'
+        value='male'
+        checked={gender === 'male'}
+        onChange={onChange}
+      />
+      Male{'  '}
+      <input
+        type='radio'
+        name='gender'
+        value='female'
+        checked={gender === 'female'}
+        onChange={onChange}
+      />
+      Female
+      <br />
+      <h4>Contact type</h4>
+      <input
+        type='radio'
+        name='type'
+        value='personal'
+        checked={type === 'personal'}
+        onChange={onChange}
+      />
+      Personal{'  '}
+      <input
+        type='radio'
+        name='type'
+        value='professional'
+        checked={type === 'professional'}
+        onChange={onChange}
+      />
+      Professional
+      <div>
+        <input
+          type='submit'
+          value={current ? 'Update Contact' : 'Add Contact'}
+          className='btn btn-primary btn-block'
+        />
+      </div>
+      {current && (
+        <div>
+          <button className='btn btn-light btn-block' onClick={clearAll}>
+            Clear
+          </button>
+        </div>
+      )}
+    </form>
+  );
+};
+
+export default ContactForm;
